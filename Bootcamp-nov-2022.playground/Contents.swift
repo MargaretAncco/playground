@@ -16,9 +16,12 @@ extension Date {
         dateComponents.day = day
         return calendar.date(from: dateComponents) ?? nil
     }
-    static func yearsBetween(startDate: Date, endDate: Date){
-        let time = startDate.timeIntervalSince(endDate)
-//        time.
+    static func yearsBetween(startDate: Date, endDate: Date)-> Int{
+        let calendar = Calendar(identifier: .gregorian)
+        let date1 = calendar.startOfDay(for: startDate)
+        let date2 = calendar.startOfDay(for: endDate)
+        let components = calendar.dateComponents([.day], from: date1, to: date2)
+            return (components.day ?? 0 ) / 365
     }
 }
 class Pet{
@@ -29,8 +32,15 @@ class Pet{
     public var name: String = ""
     var yearsOld: Int {
         get{
+            let date = Date()
+            if let birthDay = birthDay{
+                return Date.yearsBetween(startDate: birthDay, endDate: date)
+            }
             return 0
         }
+    }
+    var smallDescription : String {
+        return "\(self.name) is a(n) \(self.type) and it is \(self.yearsOld) year(s) old."
     }
     init(name: String){
         self.name = name
@@ -47,7 +57,7 @@ class Pet{
     }
 }
 
-if let date = Date.from(year: 2021, month: 07, day: 07){
+if let date = Date.from(year: 2021, month: 11, day: 23){
     var myPet = Pet(name: "Paco", type: TypePet.bird, birthDay: date)
-    print (myPet.type)
+    print (myPet.smallDescription)
 }
