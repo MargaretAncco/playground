@@ -1,70 +1,53 @@
+import Foundation // for Date
 
-// Tipos:
-
-// String
-// Int
-// Float
-// Bool
-// Double
-
-// Mutable
-var alumno = ""
-var perro: String
-
-print("valor de variable alumno antes: \(alumno)")
-
-alumno = "Diego"
-
-print("valor de variable alumno despues: \(alumno)")
-
-// Inmutable
-let isAlive: Bool = true
-
-// Int64  -> abarcan valores positivos y negativos
-// UInt64 -> abarcan valores positivos
-
-var mascota: String? = nil
-print("---->> que es:: \(mascota ?? "fido")")
-
-if 3 < 4 {
-    print("----> hola 1")
-    // do something
-}else {
-    print("----> hola 2")
-    // haz otra cosa
+enum TypePet{
+    case dog
+    case cat
+    case bird
+    case rodent
+    case other
 }
-
-// !  -> desempaquetado forzoso (menos recomendado)
-
-// ?? -> desempaquetado por defecto
-// if let -> desempaquetado seguro
-// guard let -> desempaquetado seguro
-
-var marcaCelular: String? = "Samsung"
-if let variableDesempaquetada = marcaCelular {
-    print("---->> nro de caracteres:: \(variableDesempaquetada.count)")
-}else {
-    print("---->> soy nul")
+extension Date {
+    static func from(year: Int, month: Int, day: Int) -> Date? {
+        let calendar = Calendar(identifier: .gregorian)
+        var dateComponents = DateComponents()
+        dateComponents.year = year
+        dateComponents.month = month
+        dateComponents.day = day
+        return calendar.date(from: dateComponents) ?? nil
+    }
+    static func yearsBetween(startDate: Date, endDate: Date){
+        let time = startDate.timeIntervalSince(endDate)
+//        time.
+    }
 }
-
-var equipoFutbol: String? = "Paraguay"
-if let pepito = equipoFutbol {
-    print("---->> variable segura: \(pepito)")
-}
-
-// Operadores ternarios
-let needUpdate = (4.0 < 3.2) ? true : false
-print("---->> necesita actualizar: \(needUpdate)")
-
-var ios: String? = "ios14"
-
-func validarOpcional() {
-    guard let iosDesempaquetado = ios else {
-        print("---->> sigo nil")
-        return
+class Pet{
+    var race: String = ""
+    var birthDay: Date? = Date()
+    var imageProfileUrl: String = ""
+    var type: TypePet = TypePet.cat
+    public var name: String = ""
+    var yearsOld: Int {
+        get{
+            return 0
+        }
+    }
+    init(name: String){
+        self.name = name
     }
     
-    print("---->> variable no opcional:: \(iosDesempaquetado.count)")
+    init(name: String, type: TypePet){
+        self.name = name
+        self.type = type
+    }
+    init(name: String, type: TypePet, birthDay: Date){
+        self.name = name
+        self.type = type
+        self.birthDay = birthDay
+    }
 }
 
-validarOpcional()
+if let date = Date.from(year: 2021, month: 07, day: 07){
+    var myPet = Pet(name: "Paco", type: TypePet.bird, birthDay: date)
+    print (myPet.type)
+}
