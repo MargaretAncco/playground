@@ -25,7 +25,7 @@ extension Date {
     }
 }
 class Pet{
-    var race: String = ""
+    var race: String? = ""
     var birthDay: Date? = Date()
     var imageProfileUrl: String = ""
     var type: TypePet = TypePet.cat
