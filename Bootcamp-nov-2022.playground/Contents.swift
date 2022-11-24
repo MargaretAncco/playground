@@ -1,63 +1,72 @@
-import Foundation // for Date
+let input = "CARLOS JOSÉ ROBLES GOMES, fecha de nacimiento: 06/08/1995, numero de documento 78451245, tiene 2 hermanos, carlos.roblesg@hotmail.com\nMIGUEL ANGEL QUISPE OTERO, fecha de nacimiento: 28/12/1995, numero de documento 79451654, no tiene hermanos, miguel.anguel@gmail.com\nKARLA ALEXANDRA FLORES ROSAS, fecha de nacimiento: 15/02/1997, numero de documento 77485812, tiene 1 hermanos, Karla.alexandra@hotmail.com\nNICOLAS QUISPE ZEBALLOS, fecha de nacimiento: 08/10/1990, numero de documento 71748552, tiene 1 hermanos, nicolas123@gmail.com\nPEDRO ANDRE PICASSO BETANCUR, fecha de nacimiento: 17/05/1994, numero de documento 74823157, tiene 2 hermanos, pedroandrepicasso@gmail.com\nFABIOLA MARIA PALACIO VEGA, fecha de nacimiento: 02/02/1992, numero de documento 76758254, no tiene hermanos, fabi@hotmail.com](mailto:fabi@hotmail.com"
 
-enum TypePet{
-    case dog
-    case cat
-    case bird
-    case rodent
-    case other
-}
-extension Date {
-    static func from(year: Int, month: Int, day: Int) -> Date? {
-        let calendar = Calendar(identifier: .gregorian)
-        var dateComponents = DateComponents()
-        dateComponents.year = year
-        dateComponents.month = month
-        dateComponents.day = day
-        return calendar.date(from: dateComponents) ?? nil
-    }
-    static func yearsBetween(startDate: Date, endDate: Date)-> Int{
-        let calendar = Calendar(identifier: .gregorian)
-        let date1 = calendar.startOfDay(for: startDate)
-        let date2 = calendar.startOfDay(for: endDate)
-        let components = calendar.dateComponents([.day], from: date1, to: date2)
-            return (components.day ?? 0 ) / 365
-    }
-}
-class Pet{
-    var race: String? = ""
-    var birthDay: Date? = Date()
-    var imageProfileUrl: String = ""
-    var type: TypePet = TypePet.cat
-    public var name: String = ""
-    var yearsOld: Int {
-        get{
-            let date = Date()
-            if let birthDay = birthDay{
-                return Date.yearsBetween(startDate: birthDay, endDate: date)
-            }
-            return 0
+let lines = input.split(separator: "\n").map{String($0) }
+func capitalizeStrToArray(_ wordsStr: String)-> [String]  {
+    let capitalized = wordsStr.split(separator: " ").map{
+        let firstLetter = "\($0)".first
+        var word = $0.lowercased()
+        word.removeFirst()
+        if let firstLetter=firstLetter{
+            return "\(firstLetter)" + word
         }
+        return word
     }
-    var smallDescription : String {
-        return "\(self.name) is a(n) \(self.type) and it is \(self.yearsOld) year(s) old."
+    return capitalized
+}
+enum Gender{
+    case F
+    case M
+}
+
+class Person{
+    var completeName: String = ""
+    var name: String = ""
+    let surnameFirst: String
+    let surnameSecond: String
+    let birthDay: String
+    var gender: Gender = Gender.F
+    let siblingsCount: Int
+    let dni: String
+    static func useNameToKnowGender(person: Person)-> Gender{
+        if person.name.last == "a" || person.shortName.last == "a"{
+            return Gender.F
+        }
+        return Gender.M
     }
-    init(name: String){
-        self.name = name
+    var shortName: String.SubSequence{
+        return name.split(separator: " ").first ?? " "
     }
-    
-    init(name: String, type: TypePet){
-        self.name = name
-        self.type = type
+
+    var nameFormatted: String{
+        let surnames = "\(surnameFirst) \(surnameSecond.first!)."
+        return shortName + " " + surnames
     }
-    init(name: String, type: TypePet, birthDay: Date){
-        self.name = name
-        self.type = type
-        self.birthDay = birthDay
+    init(_ recordStr: String){
+        let dataList = recordStr.split(separator: ",")
+        self.completeName = String(dataList[0])
+        let completeName = capitalizeStrToArray(String(dataList[0]))
+        self.birthDay = String(dataList[1]).replacing("fecha de nacimiento:", with: "")
+        let wordsNameCount = completeName.count
+        let surnames = completeName[(wordsNameCount-2)...(wordsNameCount-1)].map{String($0)}
+        self.surnameFirst = String(surnames[0])
+        self.surnameSecond = String(surnames[1])
+        self.dni = String(dataList[2]).replacing("numero de documento ", with: "")
+        self.name = String(completeName.joined(separator: " ")).replacing(surnames.joined(separator: " "), with: "")
+        if let siblingsCount =  Int(String(dataList[3]).replacing("[^0-9.]", with: "")){
+            self.siblingsCount = siblingsCount
+        }else{
+            self.siblingsCount = 0
+        }
+        gender = Person.useNameToKnowGender(person: self)
     }
 }
 
-if let date = Date.from(year: 2021, month: 11, day: 23){
-    var myPet = Pet(name: "Paco", type: TypePet.bird, birthDay: date)
-    print (myPet.smallDescription)
+print("list of persons\n")
+var people: [Person] = []
+lines.map{ people.append(Person($0))}
+var peopleTwoSiblings = people.filter{
+    $0.siblingsCount == 2
 }
+print("list of 2 siblings\n")
+
+print()
