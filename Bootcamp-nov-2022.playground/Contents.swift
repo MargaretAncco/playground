@@ -13,6 +13,7 @@ func capitalizeStrToArray(_ wordsStr: String)-> [String]  {
     }
     return capitalized
 }
+
 enum Gender{
     case F
     case M
@@ -52,21 +53,55 @@ class Person{
         self.surnameSecond = String(surnames[1])
         self.dni = String(dataList[2]).replacing("numero de documento ", with: "")
         self.name = String(completeName.joined(separator: " ")).replacing(surnames.joined(separator: " "), with: "")
-        if let siblingsCount =  Int(String(dataList[3]).replacing("[^0-9.]", with: "")){
+        var strCount = String(dataList[3])
+        
+        for word in ["no ","tiene "," hermanos", " "]{
+            strCount = strCount.replacing(word, with: "")
+        }
+        if let siblingsCount =  Int(strCount){
             self.siblingsCount = siblingsCount
         }else{
             self.siblingsCount = 0
         }
         gender = Person.useNameToKnowGender(person: self)
     }
+    static func peopleSeparatedByGender(people: [Person])-> (women :[Person],men:[Person]){
+        let women = people.filter{ $0.gender == Gender.F}
+        let men = people.filter{ $0.gender == Gender.M}
+        return (women, men)
+    }
+    static func printPeopleList(people: [Person]){
+        if !people.isEmpty{
+            for person in people{
+                print("-" + person.nameFormatted)
+            }
+        }else{
+            print("no hay")
+        }
+
+    }
 }
 
-print("list of persons\n")
+print("***Lista de personas***")
 var people: [Person] = []
 lines.map{ people.append(Person($0))}
-var peopleTwoSiblings = people.filter{
-    $0.siblingsCount == 2
-}
-print("list of 2 siblings\n")
 
-print()
+
+var peopleByGender = Person.peopleSeparatedByGender(people: people)
+print("\nLista de mujeres\n")
+Person.printPeopleList(people: peopleByGender.women)
+print("\nLista de hombres\n")
+Person.printPeopleList(people: peopleByGender.men)
+
+
+var peopleTwoSiblings = people.filter{
+    $0.siblingsCount >= 2
+}
+print("\n***Lista de personas con 2 a más hermanos***\n")
+if !peopleTwoSiblings.isEmpty{
+    for person in peopleTwoSiblings{
+        print("-" + person.nameFormatted + " tiene \(person.siblingsCount) hermanos")
+    }
+}else{
+    print("no hay")
+}
