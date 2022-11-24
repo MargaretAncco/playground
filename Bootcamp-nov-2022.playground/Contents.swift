@@ -62,6 +62,7 @@ class Person{
     var gender: Gender = Gender.F
     let siblingsCount: Int
     let dni: String
+    let email: String
     var yearsOld: Int {
         let date: [Int] = self.birthDay.trim().split(separator: "/").map{
             if ($0.starts(with: "0")){
@@ -141,6 +142,7 @@ class Person{
         }else{
             self.siblingsCount = 0
         }
+        email = String(dataList[4])
         gender = Person.useNameToKnowGender(person: self)
     }
     static func peopleSeparatedByGender(people: [Person])-> (women :[Person],men:[Person]){
@@ -190,4 +192,24 @@ if !peopleTwoSiblings.isEmpty{
     }
 }else{
     print("no hay")
+}
+class User{
+    let name: String
+    let surname: String
+    let userName: String
+    let birthDay: String
+    let email: String
+    init(person: Person){
+        self.name = person.name
+        self.surname = person.surnameFirst
+        self.userName = person.nameFormatted
+        self.birthDay = person.birthDay
+        self.email = person.email
+    }
+}
+print ("\n***creando usuarios***")
+let users = people.map{
+    let user = User(person: $0)
+    print (user.userName)
+    return user
 }
