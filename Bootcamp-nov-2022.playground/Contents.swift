@@ -194,15 +194,12 @@ if !peopleTwoSiblings.isEmpty{
     print("no hay")
 }
 class User{
-    let name: String
-    let surname: String
     let userName: String
     let birthDay: String
     let email: String
     init(person: Person){
-        self.name = person.name
-        self.surname = person.surnameFirst
-        self.userName = person.nameFormatted
+        userName  = String(person.email.split(separator: "@").first!)
+        
         self.birthDay = person.birthDay
         self.email = person.email
     }
@@ -213,3 +210,4 @@ let users = people.map{
     print (user.userName)
     return user
 }
+
